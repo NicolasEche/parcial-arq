@@ -1,72 +1,228 @@
-![](./resources/official_armmbed_example_badge.png)
-# Blinky Mbed OS example
+// #include "mbed.h"
+// #include <string>
 
-The example project is part of the [Arm Mbed OS Official Examples](https://os.mbed.com/code/) and is the [getting started example for Mbed OS](https://os.mbed.com/docs/mbed-os/latest/quick-start/index.html). It contains an application that repeatedly blinks an LED on supported [Mbed boards](https://os.mbed.com/platforms/).
+// const int numRows = 4;
+// const int numCols = 4;
 
-You can build the project with all supported [Mbed OS build tools](https://os.mbed.com/docs/mbed-os/latest/tools/index.html). However, this example project specifically refers to the command-line interface tool [Arm Mbed CLI](https://github.com/ARMmbed/mbed-cli#installing-mbed-cli).
-(Note: To see a rendered example you can import into the Arm Online Compiler, please see our [import quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).)
+// char keyMap[numRows][numCols] = {{'1', '2', '3', 'A'},
+//                                  {'4', '5', '6', 'B'},
+//                                  {'7', '8', '9', 'C'},
+//                                  {'*', '0', '#', 'D'}};
 
-## Mbed OS build tools
+// DigitalOut rowPins[numRows] = {DigitalOut(D2), DigitalOut(D3), DigitalOut(D4),
+//                                DigitalOut(D5)};
+// DigitalIn colPins[numCols] = {DigitalIn(D6), DigitalIn(D7), DigitalIn(D8),
+//                               DigitalIn(D9)};
 
-### Mbed CLI 2
-Starting with version 6.5, Mbed OS uses Mbed CLI 2. It uses Ninja as a build system, and CMake to generate the build environment and manage the build process in a compiler-independent manner. If you are working with Mbed OS version prior to 6.5 then check the section [Mbed CLI 1](#mbed-cli-1).
-1. [Install Mbed CLI 2](https://os.mbed.com/docs/mbed-os/latest/build-tools/install-or-upgrade.html).
-1. From the command-line, import the example: `mbed-tools import mbed-os-example-blinky`
-1. Change the current directory to where the project was imported.
+// int main() {
+//   int contador = 0;
+//   float numeros[3];
+//   string numero;
 
-### Mbed CLI 1
-1. [Install Mbed CLI 1](https://os.mbed.com/docs/mbed-os/latest/quick-start/offline-with-mbed-cli.html).
-1. From the command-line, import the example: `mbed import mbed-os-example-blinky`
-1. Change the current directory to where the project was imported.
+//   while (true) {
+//     for (int i = 0; i < numRows; i++) {
+//       rowPins[i] = 0;
 
-## Application functionality
+//       for (int j = 0; j < numCols; j++) {
+//         if (!colPins[j]) {
+//           numero += keyMap[i][j];
+//           ThisThread::sleep_for(500ms);
+//         }
+//       }
+//       rowPins[i] = 1;
+//     }
 
-The `main()` function is the single thread in the application. It toggles the state of a digital output connected to an LED on the board.
+//     if (numero.back() == '#') {
+//       numero.pop_back();
+//       numeros[contador] = stof(numero);
+//       contador++;
+//       numero = "";
 
-**Note**: This example requires a target with RTOS support, i.e. one with `rtos` declared in `supported_application_profiles` in `targets/targets.json` in [mbed-os](https://github.com/ARMmbed/mbed-os). For non-RTOS targets (usually with small memory sizes), please use [mbed-os-example-blinky-baremetal](https://github.com/ARMmbed/mbed-os-example-blinky-baremetal) instead.
+//       if (contador == 3) {
+//         break;
+//       }
+//     }
+//   }
 
-## Building and running
+//   float a = numeros[0];
+//   float b = numeros[1];
+//   float c = numeros[2];
 
-1. Connect a USB cable between the USB port on the board and the host computer.
-1. Run the following command to build the example project and program the microcontroller flash memory:
+//   float x1, x2;
 
-    * Mbed CLI 2
+//   x1 = (-b + sqrt(b * b - 4 * a * c)) / (2 * a);
+//   x2 = (-b - sqrt(b * b - 4 * a * c)) / (2 * a);
 
-    ```bash
-    $ mbed-tools compile -m <TARGET> -t <TOOLCHAIN> --flash
-    ```
+//   printf("Las soluciones de la ecuación son: x1 y x2 respectivamente = %f\n", x1, x2);
 
-    * Mbed CLI 1
-
-    ```bash
-    $ mbed compile -m <TARGET> -t <TOOLCHAIN> --flash
-    ```
-
-Your PC may take a few minutes to compile your code.
-
-The binary is located at:
-* **Mbed CLI 2** - `./cmake_build/mbed-os-example-blinky.bin`</br>
-* **Mbed CLI 1** - `./BUILD/<TARGET>/<TOOLCHAIN>/mbed-os-example-blinky.bin`
-
-Alternatively, you can manually copy the binary to the board, which you mount on the host computer over USB.
-
-## Expected output
-The LED on your target turns on and off every 500 milliseconds.
+//   return 0;
+// }
 
 
-## Troubleshooting
-If you have problems, you can review the [documentation](https://os.mbed.com/docs/latest/tutorials/debugging.html) for suggestions on what could be wrong and how to fix it.
+/* mbed Microcontroller Library
+ * Copyright (c) 2019 ARM Limited
+ * SPDX-License-Identifier: Apache-2.0
+ */
+/*
+#include "mbed.h"
+#include <iostream>
+#include <string>
+#include <cmath>
 
-## Related Links
+// Blinking rate in milliseconds
+#define BLINKING_RATE     200ms
 
-* [Mbed OS Stats API](https://os.mbed.com/docs/latest/apis/mbed-statistics.html).
-* [Mbed OS Configuration](https://os.mbed.com/docs/latest/reference/configuration.html).
-* [Mbed OS Serial Communication](https://os.mbed.com/docs/latest/tutorials/serial-communication.html).
-* [Mbed OS bare metal](https://os.mbed.com/docs/mbed-os/latest/reference/mbed-os-bare-metal.html).
-* [Mbed boards](https://os.mbed.com/platforms/).
+// Objeto para establecer la comunicación serial con el Pc
+UnbufferedSerial serial(USBTX, USBRX, 9600);
 
-### License and contributions
+using namespace std;
 
-The software is provided under Apache-2.0 license. Contributions to this project are accepted under the same license. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more info.
+const int numRows = 4;
+const int numCols = 4;
 
-This project contains code from other projects. The original license text is included in those source files. They must comply with our license guide.
+char keyMap[numRows][numCols] = {{'1', '2', '3', 'A'},
+                                 {'4', '5', '6', 'B'},
+                                 {'7', '8', '9', 'C'},
+                                 {'*', '0', '#', 'D'}};
+
+DigitalOut rowPins[numRows] = {DigitalOut(D2), DigitalOut(D3), DigitalOut(D4),
+                               DigitalOut(D5)};
+DigitalIn colPins[numCols] = {DigitalIn(D6), DigitalIn(D7), DigitalIn(D8),
+                              DigitalIn(D9)};
+
+char getKeyPressed() {
+    for (int i = 0; i < numRows; i++) {
+        rowPins[i] = 0;
+        for (int j = 0; j < numCols; j++) {
+            if (!colPins[j]) {
+                char num = keyMap[i][j];
+                ThisThread::sleep_for(500ms);  // Avoid multiple readings while the key is pressed
+                return num;
+            }
+        }
+        rowPins[i] = 1;
+    }
+    return '\0';
+}
+
+int main() {
+    string numero = "";
+    float grade;
+    while (true) {
+        char key = getKeyPressed();
+        if (key != '\0') {
+            if (key == '#') {
+                if (numero.empty()) {
+                    printf("No grade entered.\n");
+                } else {
+                    grade = stof(numero);
+                    char alphanumeric_grade;
+                    if (grade >= 0 && grade <= 3) {
+                        alphanumeric_grade = 'A';
+                    } else if (grade > 3 && grade <= 4) {
+                        alphanumeric_grade = 'B';
+                    } else if (grade > 4 && grade <= 5) {
+                        alphanumeric_grade = 'C';
+                    } else if (grade > 5 && grade <= 7) {
+                        alphanumeric_grade = 'D';
+                    } else if (grade > 7 && grade < 9) {
+                        alphanumeric_grade = 'E';
+                    } else if (grade >= 9 && grade <= 10) {
+                        alphanumeric_grade = 'F';
+                    } else {
+                        printf("Invalid grade entered.\n");
+                        numero = "";
+                        continue;
+                    }
+                    printf("Alphanumeric grade: %c\n", alphanumeric_grade);
+                    numero = "";
+                }
+            } else {
+                numero += key;
+            }
+        }
+    }
+    return 0;
+}*/
+/*
+#include "mbed.h"
+#include <iostream>
+#include <string.h>
+
+//Definimos el período de tiempo en el que se cambiará el color 
+//de los LEDs RGB. En este caso, se establece en 50 milisegundos (ms)
+#define BLINKING_RATE     50ms
+
+//Creamos un objeto UnbufferedSerial llamado serial para la comunicación
+//serial utilizando los pines USBTX y USBRX de la placa
+//La velocidad de transmisión se establece en 9600 baudios*
+UnbufferedSerial serial(USBTX, USBRX, 9600);
+
+//Creamos objetos PwmOut para controlar los LEDs RGB conectados a los pines
+//LED1, LED2 y LED3 de la placa
+//con estos objetos podremos controlar la intensidad de los colores rojo,
+//verde y azul mediante modulación por ancho de pulso (PWM)*
+PwmOut ledR(LED1);
+PwmOut ledG(LED2);
+PwmOut ledB(LED3);
+
+//Definimos una función setRGBColor que toma tres valores flotantes del 0 al 1
+//para establecer la intensidad de los colores rojo, verde y azul en los LEDs RGB
+void setRGBColor(float red, float green, float blue) {
+    ledR = red;
+    ledG = green;
+    ledB = blue;
+}
+
+const int numRows = 4;
+const int numCols = 4;
+
+char keyMap[numRows][numCols] = {{'1', '2', '3', 'A'},
+                                 {'4', '5', '6', 'B'},
+                                 {'7', '8', '9', 'C'},
+                                 {'*', '0', '#', 'D'}};
+
+DigitalOut rowPins[numRows] = {DigitalOut(D2), DigitalOut(D3), DigitalOut(D4),
+                               DigitalOut(D5)};
+DigitalIn colPins[numCols] = {DigitalIn(D6), DigitalIn(D7), DigitalIn(D8),
+                              DigitalIn(D9)};
+
+char getKeyPressed() {
+    for (int i = 0; i < numRows; i++) {
+        rowPins[i] = 0;
+        for (int j = 0; j < numCols; j++) {
+            if (!colPins[j]) {
+                char num = keyMap[i][j];
+                ThisThread::sleep_for(500ms);  // Avoid multiple readings while the key is pressed
+                return num;
+            }
+        }
+        rowPins[i] = 1;
+    }
+    return '\0';
+}
+
+int main() {
+    while(true) {
+        char key = getKeyPressed();
+        if (key != '\0') {
+            if (key == '#') {
+                break;
+            } else {
+                if (key >= '0' && key <= '9' || key >= 'A' && key <= 'F') {
+                    char input[8];
+                    input[0] = '#';
+                    input[1] = key;
+                    input[2] = '\0';
+                    unsigned int colorValue;
+                    sscanf(input, "%x", &colorValue);
+                    float red = (1-(float)((colorValue >> 16) & 0xFF) / 255.0f);
+                    float green = (1-(float)((colorValue >> 8) & 0xFF) / 255.0f);
+                    float blue = (1-(float)(colorValue & 0xFF) / 255.0f);
+                    setRGBColor(red, green, blue);
+                }
+            }
+        }
+    }
+    return 0;
+}*/
