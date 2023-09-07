@@ -20,11 +20,40 @@ DigitalIn colPins[numCols] = {DigitalIn(D6), DigitalIn(D7), DigitalIn(D8), Digit
 
 ```
 
-Luego se lee cuál es la fila y la columna dónde está la tecla que oprimió el usuario:
+### Almacenamiento de cada valor en la ecuación
+
+Luego se enciende la fila que el usuario ingresa:
 
 ```C++
 
+int main() {
+   int contador = 0;
+   float numeros[3];
+   string numero;
+
+   while (true) {
+     for (int i = 0; i < numRows; i++) {
+       rowPins[i] = 0;
+
+       for (int j = 0; j < numCols; j++) {
+         if (!colPins[j]) {
+           numero += keyMap[i][j];
+           ThisThread::sleep_for(500ms);
+         }
+       }
+       rowPins[i] = 1;
+      }
+    }
+}
 
 ```
 
+Se itera a través de todas las filas para encederlas una a una. Luego se verifica si alguna tecla ha sido presionada por medio de esta línea de código:
+
+```C++
+
+if (!colPins[j])
+
+```
+Luego de leer la tecla oprimida por el usuario, el caracter que corresponde a dicha tecla se concatena a la cadena 'numero' para guardar un número de más de un dígito.
 
