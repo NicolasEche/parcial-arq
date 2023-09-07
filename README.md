@@ -57,3 +57,26 @@ if (!colPins[j])
 ```
 Luego de leer la tecla oprimida por el usuario, el caracter que corresponde a dicha tecla se concatena a la cadena 'numero' para guardar un número de más de un dígito.
 
+Ahora, para poder almacenar los tres números, mencionamos anteriormente que se debe presionar la tecla '#' para poder pasar a almacenar el siguiente número, dicho proceso se lleva a cabo mediante la siguiente parte del código:
+
+```C++
+
+if (numero.back() == '#') {
+     numero.pop_back();
+     numeros[contador] = stof(numero);
+     contador++;
+     numero = "";
+
+     if (contador == 3) {
+       break;
+     }
+}
+
+```
+
+Primero se verifica si el último caracter de la cadena número es el símbolo '#' a continuación se elimina dicho símbolo para poder usarlo luego en el cálculo de los resultados de la ecuación. El sistema detecta que ya se han ingresado los tres números cuando la longitud de el arreglo ``` numeros ``` tiene un valor de 3, es ahí cuando sale del ciclo while infinito.
+
+### Cálculo de los resultados de la ecuación
+
+
+
